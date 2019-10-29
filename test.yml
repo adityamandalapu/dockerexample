@@ -1,0 +1,154 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: dockerexample
+    name: fuse-java-openshift
+  spec:
+    tags:
+    - annotations:
+        openshift.io/imported-from: registry.access.redhat.com/fuse7/fuse-java-openshift
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/fuse7/fuse-java-openshift
+      generation: null
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: ""
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: dockerexample
+    name: dockerexample
+  spec: {}
+  status:
+    dockerImageRepository: ""
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: dockerexample
+    name: dockerexample
+  spec:
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: dockerexample:latest
+    postCommit: {}
+    resources: {}
+    source:
+      git:
+        uri: https://tn302aq@bitbucket-test.dhs.tn.gov/scm/ea/dockerfile-example.git
+      type: Git
+    strategy:
+      dockerStrategy:
+        from:
+          kind: ImageStreamTag
+          name: fuse-java-openshift:latest
+      type: Docker
+    triggers:
+    - github:
+        secret: j6k4ZTCrMa9642yFqt50
+      type: GitHub
+    - generic:
+        secret: 0q7oDh6ROsNcPtN8_WsP
+      type: Generic
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: dockerexample
+    name: dockerexample
+  spec:
+    replicas: 1
+    selector:
+      app: dockerexample
+      deploymentconfig: dockerexample
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: dockerexample
+          deploymentconfig: dockerexample
+      spec:
+        containers:
+        - image: dockerexample:latest
+          name: dockerexample
+          ports:
+          - containerPort: 8778
+            protocol: TCP
+          - containerPort: 9779
+            protocol: TCP
+          resources: {}
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - dockerexample
+        from:
+          kind: ImageStreamTag
+          name: dockerexample:latest
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    labels:
+      app: dockerexample
+    name: dockerexample
+  spec:
+    ports:
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    - name: 9779-tcp
+      port: 9779
+      protocol: TCP
+      targetPort: 9779
+    selector:
+      app: dockerexample
+      deploymentconfig: dockerexample
+  status:
+    loadBalancer: {}
+kind: List
+metadata: {}
